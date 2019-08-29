@@ -5,7 +5,7 @@
 </template>
 
 <script>
-  import "@assets/js/lesson2"
+  import "@assets/js/lesson12"
 
   export default {
     name: "testES6",
