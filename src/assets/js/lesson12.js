@@ -21,9 +21,9 @@
     set(target, key, value) {
       if (key === 'name') {
         return target[key] = value;
-     /*  效果同上
-        target[key] = value;
-        return true;*/
+        /*  效果同上
+           target[key] = value;
+           return true;*/
       } else {
         return target[key];  //跟 return true 结果一样；
 
@@ -84,7 +84,9 @@
   console.log(obj);
   console.log('has', Reflect.has(obj, 'name'));
 }
-
+/*
+* 示例：和业务解耦的校验
+* */
 {
   function validator(target, validator) {
     return new Proxy(target, {
@@ -109,20 +111,104 @@
       return typeof val === "string"
     },
     age(val) {
-      return typeof val === "Number" && val > 18
+      return typeof val === "number" && val > 18
+    },
+    mobile(val) {
+      return true
     }
   };
 
   class Person {
-    constructor(name, age) {
-      this.name = name;
+    constructor(name, age, mobile) {
+      /*this.name = name;
       this.age = age;
+      this.mobile = mobile;*/
+      this.name = "";
+      this.age = 0;
+      this.mobile = "";
+      /*
+      * 以下校验 只能对new Person('lilei', 30,131)时，传入的值进行校验
+      * */
+      let _personVa = personValidators;
+      let keysAry = Object.keys(this);
+      for (let key of keysAry) {
+        console.log("key=" + key);
+        let va = _personVa[key];
+        let param = eval(key);
+        if (!!va(param)) {
+          Reflect.set(this, key, param)
+        } else {
+          throw Error(`不能赋值${param}到${key}`)
+        }
+      }
+      /*
+      * 以下校验(return validator)只能对 new Person之后的实例-person.name=48 这样赋值进行校验
+      * */
       return validator(this, personValidators)
     }
   }
 
-  const person = new Person('lilei', 30);
+  // const person = new Person('lilei', 30,131);
+  const person = new Person(66, 30, 131);
   console.info(person);
 
   person.name = 48;
+  console.info(person);
 }
+/*练习*/
+/*{
+  function validator(target, vali) {
+    return new Proxy(target, {
+      _vali: vali,
+      set(target, key, value, proxy) {
+        if (target.hasOwnProperty(key)) {
+          let va = this._vali[key];
+          if (!!va(value)) {
+            return Reflect.set(target, key, value, proxy);
+          } else {
+            throw Error(`不能给${key}赋值${value}`)
+          }
+        } else {
+          throw Error(`${key}不存在`);
+        }
+      }
+    })
+  }
+
+  const personValidator = {
+    name(val) {
+      return typeof val === "string";
+    },
+    age(val) {
+      return typeof val === "number" && val > 18
+    },
+    mobile(val) {
+      return true
+    }
+  }
+
+  class Person {
+    constructor(name, age, mobile) {
+      this.name = "";
+      this.age = "";
+      this.mobile = "";
+      let keyAry = Object.keys(this);
+      let personV = personValidator;
+      for (let key of keyAry) {
+        let va = personV[key];
+        let value = eval(key)
+        if (!!va(value)) {
+          Reflect.set(this, key, value);
+        } else {
+          throw Error(`不能将${key}赋值为${value}`);
+        }
+      }
+      return validator(this, personValidator)
+    }
+  }
+
+  let person = new Person("dabao", 38, 132);
+  console.log("person1=", person);
+  person.name = 18;
+  console.log("person2=", person);
+}*/
