@@ -38,7 +38,7 @@
 
     class Child extends Parent{
         constructor(name='child'){
-            super(name);
+            super(name);//super，子类覆盖父类的参数；一定放着第一行
             this.type='child';
         }
     }
@@ -52,7 +52,7 @@
         constructor(name='mukewang'){
             this.name=name;
         }
-
+        //属性，不是方法
         get longName(){
             return 'mk'+this.name
         }
