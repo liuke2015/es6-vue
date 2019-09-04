@@ -22,55 +22,56 @@
 * */
 
 {
-    let readonly=function(target,name,descriptor){
-        descriptor.writable=false;
-        return descriptor
-    };
+  let readonly = function (target, name, descriptor) {
+    descriptor.writable = false;
+    return descriptor
+  };
 
-    class Test{
-        @readonly
-        time(){
-            return '2017-03-11'
-        }
+  class Test {
+    @readonly
+    time() {
+      return '2017-03-11'
     }
+  }
 
-    let test=new Test();
+  let test = new Test();
 
-    // test.time=function(){
-    //   console.log('reset time');
-    // };
+  // test.time=function(){
+  //   console.log('reset time');
+  // };
 
-    console.log(test.time());
+  console.log(test.time());
 }
 
 
 {
-    let typename=function(target,name,descriptor){
-        //给类增加静态属性
-        target.myname='hello';
-    }
+  let typename = function (target, name, descriptor) {
+    //给类增加静态属性
+    target.myname = 'hello';
+  }
 
-    @typename
-    class Test{
+  /*可以放在类里面，也可以放在类外面。但是，必须放在class的前面*/
+  @typename
+  class Test {
 
-    }
+  }
 
-    console.log('类修饰符',Test.myname);
-    // 第三方库修饰器的js库：core-decorators; npm install core-decorators
+  console.log('类修饰符', Test.myname);
+  // 第三方库修饰器的js库：core-decorators; npm install core-decorators
 }
 
 //日志系统
-{
+/*{
     let log=(type)=>{
         return function(target,name,descriptor){
-            let src_method=descriptor.value;
-            descriptor.value=(...arg)=>{
-                src_method.apply(target,arg);
-                /*模拟埋点
-                * new Image().src=一个接口
-                * */
-                console.info(`log ${type}`);
-            }
+          let src_method = descriptor.value;
+          descriptor.value = (...arg) => {
+            src_method.apply(target, arg);
+            /!*模拟埋点
+            * new Image().src=一个接口
+            * *!/
+            console.info(`log ${type}`);
+          }
         }
     }
 
@@ -85,13 +86,13 @@
         }
     }
 
-   /* let ad=new AD();
+    let ad=new AD();
     ad.show();
-    ad.click();*/
-}
+    ad.click();
+}*/
 
 //日志系统练习
-{
+/*{
     let log=function(type){
         return function(target,name,descriptor){
             var src_method=descriptor.value;
@@ -117,4 +118,59 @@
     let ad=new AD();
     ad.show();
     ad.click();
+}*/
+
+/*日志系统练习二*/
+/*{
+  let log=(type)=>{
+    return function (target,name,descriptor){
+      let method=descriptor.value;
+      descriptor.value=(...arg)=>{
+        method.apply(target,arg);
+        console.log(`log ${type}`)
+      }
+    }
+  }
+  class Ad{
+    @log("show")
+    show(){
+      console.log('ad is show')
+    }
+    @log("click")
+    click(){
+      console.log('ad is click')
+    }
+  }
+  let ad=new Ad();
+  ad.show();
+  ad.click();
+}*/
+/*日志系统练习三*/
+{
+  let log = (type) => {
+    return function (target, name, descriptor) {
+      let method = descriptor.value;
+      descriptor.value = (...arg) => {
+        method.apply(target, arg);//此处无法使用method.call()
+        console.log(`log ${type}`);
+      }
+    }
+  }
+
+  class Ad {
+    @log("show")
+    show(a,b) {
+      console.log(`ad is show 。a = ${a};b = ${b}`)
+    }
+
+    @log("click")
+    click(a,b) {
+      console.log(`ad is click 。a = ${a};b = ${b}`)
+    }
+  }
+
+  let ad = new Ad();
+  ad.show(1, 2);
+  ad.click(3, 4);
 }
+
