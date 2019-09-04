@@ -1,11 +1,9 @@
 <template>
-  <div id="testES6">
-
-  </div>
+  <div id="testES6"></div>
 </template>
 
 <script>
-  import "@assets/js/lesson12"
+  import "@assets/js/lesson17"
 
   export default {
     name: "testES6",
@@ -18,5 +16,4 @@
 </script>
 
 <style lang="less">
-
 </style>
