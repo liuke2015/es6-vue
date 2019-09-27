@@ -319,19 +319,43 @@
       })
     }
   }
-  let generator=ajax(5);
-  let pull=function () {
-    let step=generator.next();
-    step.value.then(function(d){
-      if(d.code==0){
+  let generator = ajax(5);
+  let pull = function () {
+    let step = generator.next();
+    step.value.then(function (d) {
+      if (d.code == 0) {
         console.log(`等待结束,code==0`);
-      }else{
+      } else {
         console.log(`code==${d.code},waite`);
-        setTimeout(()=>{
+        setTimeout(() => {
           pull();
-        },1000)
+        }, 1000)
       }
     })
   }
   pull()
 }
+
+/*长轮询练习5*/
+/*{
+  let ajax = function* () {
+    yield new Promise(function (resolve, reject) {
+      setTimeout(function () {
+        resolve({code: 0})
+      }, 1000)
+    })
+  }
+
+  let pull = function () {
+    let step = ajax().next();
+    step.value.then(function (d) {
+      if (d.code == 0) {
+        console.log("长轮询练习5,code==0");
+       /!* pull()*!/
+      }else{
+        console.log(d)
+      }
+    })
+  }
+  pull()
+}*/
